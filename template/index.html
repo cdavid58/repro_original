@@ -1,0 +1,54 @@
+{% extends './base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+
+<div class="form-group row">
+    <div class="col-md-5 col-12" style="padding: 5px !important;">
+        <input class="form-control music" type="text" value="" placeholder="Escriba la Cancion">
+    </div>
+    <div class="col-md-4 col-12" style="padding: 5px !important;">
+        <input class="form-control artist" type="text" value="" placeholder="Escriba el artista">
+    </div>
+    <div class="col-md-2 col-12" style="padding: 5px !important;">
+        <button class="btn btn-primary request col-12" >Solicitar</button>
+    </div>
+</div>
+
+
+{% include './table_music.html' %}
+
+{% endblock %}
+{% block script %}
+  <script>
+
+    var pageRefresh = 1000; //5 s
+    setInterval(function() {
+          refresh();
+        }, pageRefresh
+    );
+
+    // Functions
+    function refresh() {
+        $('.list_employee').load("{% url 'Index' %} .list_employee");
+    }
+
+    $(".request").click(function(e){
+        e.preventDefault()
+        music = $(".music").val()
+        artist = $(".artist").val()
+        $.ajax({
+            url:"{% url 'Save_Music' %}",
+            data:{'music':music,'artist':artist},
+            success:function(data){
+                if(data == "False"){
+                    $.notify("Ya consumio sus cinco canciones", "info");
+                    $.notify("Espere a que termine una de las que solicito", "info");
+                }
+            }
+        })
+    })
+
+  </script>
+
+{% endblock %}
